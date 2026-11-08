@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.3.0
+## 0.3.1
 
 Replace the locally selected REST facade with a bridge to the actual authenticated LeadAdapter remote MCP tool inventory.
 

@@ -1,5 +1,41 @@
 # LinkedIn MCP for Claude, Codex and AI agents
 
+## Review a lead shortlist from your AI assistant
+
+Discover an authorized read tool, then produce a reviewable lead brief.
+
+### Try the task with synthetic data
+
+No product key is needed for this demo. Requires Node.js 22+.
+
+```sh
+npm ci --ignore-scripts
+npm run demo
+# Optional: save a private report to a new file.
+npm run demo -- --output ./synthetic-report.json
+```
+
+Output: a task-specific JSON review report selecting 1 of 2 invented records. It includes the completed fixture receipt and a request trace; no provider request or write occurs.
+
+The synthetic records use normalized review fields. Review and map your actual provider schema before applying the same selection to live data.
+
+### Use your authorized account
+
+[Activate this task](https://leadadapter.com/github/start?integration=linkedin-mcp&flow=agent-lead-review&utm_source=github&utm_campaign=github-linkedin-mcp&utm_content=task-demo), then set **LEADADAPTER_API_KEY** in your process environment. Select an authorized connected LinkedIn profile; existing scopes, caps and review requirements apply.
+
+```sh
+npm run preflight
+```
+
+Preflight checks access/discovery only; it does not count as a completed provider task. For an explicitly reviewed read, use the returned live schema and the exact operation/tool, arguments and stable idempotency key:
+
+```sh
+npm run verify:read -- --tool '<actual discovered read-only tool>' --arguments '<reviewed argument JSON>' --idempotency-key '<stable request key>' --confirm-read-only
+```
+
+The verification command performs only the selected authorized read; it refuses writes and never selects a customer operation automatically. Only a completed receipt establishes a live read. Missing access, pending jobs and uncertain outcomes remain explicit blockers. Reports contain receipt digests rather than customer payloads. No prices, trials or account allowances are changed.
+
+
 **Give your AI assistant access to your authorized LinkedIn workflows through LeadAdapter. One LeadAdapter API key.**
 
 Research people, inspect engagement, enrich selected profiles and work with leads through the tools enabled in your workspace. This package bridges stdio MCP clients to LeadAdapter's hosted MCP endpoint; it discovers the server's actual tools and schemas at runtime.

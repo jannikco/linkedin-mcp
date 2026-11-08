@@ -5,7 +5,7 @@
   "releaseEligible": true,
   "maintainer": "jannikco",
   "license": "MIT",
-  "sourceRevision": "deb265b098cc0ea3b06db3e843fc352a22dc0925a18191ecb913100d9771c1df",
+  "sourceRevision": "05a558d3fd750194083d5ca52413699e272a81cfd25c0a959786bf670a0d0031",
   "evidence": [
     "Actual tools/call and direct-provider request contract tests"
   ],
@@ -16,7 +16,7 @@
   "kind": "provider-connector",
   "product": "leadadapter",
   "title": "LeadAdapter LinkedIn MCP server",
-  "description": "Use your authorized LinkedIn workflows from AI agents through LeadAdapter remote MCP. Discover actual tools with one LeadAdapter API key.",
+  "description": "LinkedIn MCP for Claude Code, Codex and AI agents. Discover your authorized LeadAdapter tools and connect with one LeadAdapter API key.",
   "operationIds": [],
   "endpoint": "https://leadadapter.com/mcp",
   "attributionSlug": "github-linkedin-mcp",
@@ -51,12 +51,12 @@
     }
   },
   "utility": {
-    "problem": "Use your authorized LinkedIn workflows from AI agents through LeadAdapter remote MCP. Discover actual tools with one LeadAdapter API key.",
+    "problem": "LinkedIn MCP for Claude Code, Codex and AI agents. Discover your authorized LeadAdapter tools and connect with one LeadAdapter API key.",
     "output": "Authenticated LeadAdapter results, review reports and resumable research-to-CRM workflows"
   },
   "providerDocs": "https://leadadapter.com/api/v1/openapi.json",
   "agentReady": true,
-  "version": "0.3.0",
+  "version": "0.3.1",
   "executionAuthority": "leadadapter-remote-mcp",
   "remoteMcp": {
     "endpoint": "https://leadadapter.com/mcp",

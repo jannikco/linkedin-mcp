@@ -1,7 +1,7 @@
 {
   "name": "linkedin-mcp",
-  "version": "0.3.0",
-  "description": "Use your authorized LinkedIn workflows from AI agents through LeadAdapter remote MCP. Discover actual tools with one LeadAdapter API key.",
+  "version": "0.3.1",
+  "description": "LinkedIn MCP for Claude Code, Codex and AI agents. Discover your authorized LeadAdapter tools and connect with one LeadAdapter API key.",
   "type": "module",
   "private": false,
   "license": "MIT",
@@ -9,8 +9,11 @@
     "node": ">=22"
   },
   "scripts": {
-    "test": "node --test",
-    "start": "node lib/cli.mjs"
+    "test": "node --test && node --test demo/demo.test.mjs",
+    "start": "node lib/cli.mjs",
+    "demo": "node demo/run.mjs",
+    "preflight": "node demo/run.mjs --preflight",
+    "verify:read": "node demo/run.mjs --live-read"
   },
   "exports": "./lib/index.mjs",
   "bin": {

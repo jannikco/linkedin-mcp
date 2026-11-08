@@ -1,0 +1,49 @@
+{
+  "id": "agent-lead-review",
+  "repositoryId": "linkedin-mcp",
+  "product": "leadadapter",
+  "connectorId": "linkedin",
+  "title": "Review a lead shortlist from your AI assistant",
+  "promise": "Discover an authorized read tool, then produce a reviewable lead brief.",
+  "sourceRevision": "05a558d3fd750194083d5ca52413699e272a81cfd25c0a959786bf670a0d0031",
+  "credential": "LEADADAPTER_API_KEY",
+  "transport": "leadadapter-mcp",
+  "sourceRefs": [
+    "https://leadadapter.com/docs/api-reference?lang=en"
+  ],
+  "readTask": {
+    "intent": "Discover an authorized read tool, then produce a reviewable lead brief.",
+    "requiredCapability": "Read-only authorized account data; discover actual names and schemas first"
+  },
+  "synthetic": {
+    "strategy": "equals",
+    "field": "reviewState",
+    "value": "ready",
+    "records": [
+      {
+        "id": "synthetic-lead-a",
+        "reviewState": "ready",
+        "source": "synthetic post"
+      },
+      {
+        "id": "synthetic-lead-b",
+        "reviewState": "needs-evidence",
+        "source": "synthetic search"
+      }
+    ],
+    "input": {
+      "limit": 10
+    },
+    "normalization": "Invented normalized review fields demonstrate task logic; live provider schemas and field mappings must be reviewed separately.",
+    "expectedReviewCount": 1,
+    "asOf": "2026-11-08T00:00:00Z"
+  },
+  "livePolicy": {
+    "default": "preflight-only",
+    "explicitReadSelectionRequired": true,
+    "providerWritesAllowed": false,
+    "sandboxWritesRequireSeparateApproval": true
+  },
+  "baseSourceRevision": "deb265b098cc0ea3b06db3e843fc352a22dc0925a18191ecb913100d9771c1df",
+  "releaseVersion": "0.3.1"
+}

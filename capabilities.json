@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "linkedin-mcp",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "product": "leadadapter",
   "credential": "LEADADAPTER_API_KEY",
   "executionAuthority": "https://leadadapter.com/mcp",
