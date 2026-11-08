@@ -1,29 +1,70 @@
-# LinkedIn MCP setup and connection checker
+# LeadAdapter LinkedIn MCP server
 
-Configure and inspect the hosted LeadAdapter MCP endpoint from supported AI clients.
+Inspect your connected profile state, then retrieve your workspace’s stored leads before planning further governed LinkedIn actions.
 
-Maintainer: jannikco · License: MIT · Verification: **mock-only**
+A direct-provider MCP server with useful local execution. Uses your LeadAdapter API account and its existing governance.
 
 ## Quick start
 
-Requires Node.js 22 or later.
+Requires Node.js22+. Clone this repository, then run:
 
 ```sh
-npm ci
+npm ci --ignore-scripts
 npm test
 npm start
 ```
 
-The default example runs locally without credentials and makes no external changes. Verification status describes recorded evidence; local configuration tests do not establish that provider authentication or execution works.
+The default command inspects the tools offline. Configure your own credentials in your environment:
 
-## Connect your API
+- `LEADADAPTER_API_KEY`
 
-[Create or sign in to LeadAdapter](https://leadadapter.com/register?utm_source=github&utm_campaign=github-linkedin-mcp) and select the integration. Connect your authorized provider account and copy its hosted MCP endpoint. Set PIPMCP_ENDPOINT and, if required, LEADADAPTER_API_KEY in your environment. Run npm start to produce client configuration; run npm start -- --live for a read-only connection check. Provider app presence is catalog evidence, not live verification.
 
-## Managed service
 
-[Continue with LeadAdapter](https://leadadapter.com/register?utm_source=github&utm_campaign=github-linkedin-mcp). This repository is maintained by the integration team and does not imply endorsement by LinkedIn or other providers.
+Credential help: https://leadadapter.com/api/v1/openapi.json
 
-## Provenance and support
+## Execute a real read
 
-Source revision: ea33908e4d5e10508739f28e11abf708e11f3117f1108b904229eeeb00079e55. The complete manifest is in integration.json; SHA256SUMS covers the reviewed artifact. Open a repository issue without credentials or personal data. See SECURITY.md for sensitive reports. No telemetry is sent by this code; signup links include explicit campaign parameters.
+Replace example record IDs with records you are authorized to access.
+
+```sh
+npm start -- --call list_leads_get '{}'
+```
+
+## Use with an MCP client
+
+Launch `node /absolute/path/linkedin-mcp/server.mjs` using stdio transport; pass credentials through the client environment. Stdout is reserved for JSON-RPC.
+
+## Tools
+
+| Tool | Effect | Purpose |
+| --- | --- | --- |
+| list_leads_get | Read | List Leads |
+| search_post | Read | Search |
+| list_post_engagers_post | Read | List Post Engagers |
+| get_extension_status_get | Read | Extension status |
+| comment_on_post_post | Explicit approval required | Comment On Post |
+
+## Concrete workflow
+
+Inspect your connected profile state, then retrieve your workspace’s stored leads before planning further governed LinkedIn actions.
+
+1. get_extension_status_get
+2. list_leads_get
+
+## Optional writes
+
+Writes are disabled by default. Set CONNECTOR_ALLOW_WRITES=true and supply `_approval: {approved:true,idempotencyKey:"unique-request-id"}` on the specific call. Do not reuse a key for a different request. Uncertain outcomes are never automatically replayed; inspect the provider before another attempt.
+
+## Capability evidence
+
+Local: **Tested — HTTP fixtures and real stdio tools/call**. Managed: **Documented**. Provider authentication and live operations have not been established by these fixture tests. Evidence applies per operation and execution mode; setup discovery does not imply provider execution.
+
+## Managed production
+
+[Activate with LeadAdapter](https://leadadapter.com/github/start?integration=linkedin-mcp&utm_source=github&utm_campaign=github-linkedin-mcp&utm_content=readme) when you want the hosted service.  Local credentials are not uploaded by this code. Review provider permissions in the managed onboarding. [Directory and related projects](https://jannikco.github.io/pipmcp-connectors/integrations/linkedin/).
+
+## Provenance and maintenance
+
+- https://leadadapter.com/api/v1/openapi.json
+
+Maintainer:jannikco. MIT license for this code. See connector.json for selected operations and integration.json for evidence. Runtime dependencies retain their own licenses. Report sensitive issues through https://pipmcp.com/contact; do not post credentials or customer data in public issues.

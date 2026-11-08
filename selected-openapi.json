@@ -1,0 +1,324 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "LeadAdapter LinkedIn selected operations",
+    "version": "0.2.0",
+    "description": "Reviewed local connector bindings for manual API import. No provider credentials are included; authentication and hosted execution require separate configuration and tests."
+  },
+  "servers": [
+    {
+      "url": "https://leadadapter.com/api/v1"
+    }
+  ],
+  "paths": {
+    "/leads": {
+      "get": {
+        "operationId": "list_leads_get",
+        "summary": "List Leads",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "maxLength": 255,
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "new",
+                "contacted",
+                "replied",
+                "qualified",
+                "won",
+                "lost"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "minimum": 1,
+              "maximum": 50,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "profile_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "The LinkedIn profile to act as. Optional while the workspace has exactly one.",
+              "type": "string"
+            }
+          }
+        ],
+        "x-pipmcp-read-only": true,
+        "responses": {
+          "200": {
+            "description": "Provider response; inspect provider documentation for result fields."
+          }
+        }
+      }
+    },
+    "/linkedin/searches/people": {
+      "post": {
+        "operationId": "search_post",
+        "summary": "Search",
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            }
+          }
+        ],
+        "x-pipmcp-read-only": true,
+        "responses": {
+          "200": {
+            "description": "Provider response; inspect provider documentation for result fields."
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "limit": {
+                    "minimum": 1,
+                    "maximum": 50,
+                    "type": "integer"
+                  },
+                  "page": {
+                    "minimum": 1,
+                    "maximum": 100,
+                    "type": "integer"
+                  },
+                  "dry_run": {
+                    "description": "Evaluate the governance rules and return the verdict without acting.",
+                    "type": "boolean"
+                  },
+                  "keywords": {
+                    "minItems": 1,
+                    "maxItems": 10,
+                    "items": {
+                      "maxLength": 100,
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  "profile_id": {
+                    "description": "The LinkedIn profile to act as. Optional while the workspace has exactly one.",
+                    "type": "string"
+                  },
+                  "wait": {
+                    "description": "Hold the call until the selected executor finishes, up to 25 seconds.",
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "keywords"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/linkedin/post-engager-requests": {
+      "post": {
+        "operationId": "list_post_engagers_post",
+        "summary": "List Post Engagers",
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            }
+          }
+        ],
+        "x-pipmcp-read-only": true,
+        "responses": {
+          "200": {
+            "description": "Provider response; inspect provider documentation for result fields."
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "limit": {
+                    "minimum": 1,
+                    "maximum": 50,
+                    "type": "integer"
+                  },
+                  "page": {
+                    "minimum": 1,
+                    "maximum": 100,
+                    "type": "integer"
+                  },
+                  "dry_run": {
+                    "description": "Evaluate the governance rules and return the verdict without acting.",
+                    "type": "boolean"
+                  },
+                  "post_urn": {
+                    "maxLength": 255,
+                    "type": "string"
+                  },
+                  "profile_id": {
+                    "description": "The LinkedIn profile to act as. Optional while the workspace has exactly one.",
+                    "type": "string"
+                  },
+                  "wait": {
+                    "description": "Hold the call until the selected executor finishes, up to 25 seconds.",
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "post_urn"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/profiles": {
+      "get": {
+        "operationId": "get_extension_status_get",
+        "summary": "Extension status",
+        "parameters": [
+          {
+            "name": "profile_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "The LinkedIn profile to act as. Optional while the workspace has exactly one.",
+              "type": "string"
+            }
+          }
+        ],
+        "x-pipmcp-read-only": true,
+        "responses": {
+          "200": {
+            "description": "Provider response; inspect provider documentation for result fields."
+          }
+        }
+      }
+    },
+    "/linkedin/comments": {
+      "post": {
+        "operationId": "comment_on_post_post",
+        "summary": "Comment On Post",
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            }
+          }
+        ],
+        "x-pipmcp-read-only": false,
+        "responses": {
+          "200": {
+            "description": "Provider response; inspect provider documentation for result fields."
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "target_urn": {
+                    "description": "Recipient person URN, post URN or parent comment URN, as appropriate for this tool.",
+                    "maxLength": 255,
+                    "type": "string"
+                  },
+                  "lead_id": {
+                    "description": "Optional lead belonging to this workspace.",
+                    "type": "string"
+                  },
+                  "author_urn": {
+                    "description": "Author of the target post or comment; required for public engagement so suppression checks identify the person.",
+                    "maxLength": 255,
+                    "type": "string"
+                  },
+                  "text": {
+                    "maxLength": 1900,
+                    "type": "string"
+                  },
+                  "profile_id": {
+                    "description": "The LinkedIn profile to act as. Optional while the workspace has exactly one.",
+                    "type": "string"
+                  },
+                  "dry_run": {
+                    "description": "Evaluate the governance rules and return the verdict without acting.",
+                    "type": "boolean"
+                  },
+                  "wait": {
+                    "description": "Hold the call until the selected executor finishes, up to 25 seconds.",
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "target_urn",
+                  "author_urn",
+                  "text"
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "providerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  },
+  "security": [
+    {
+      "providerAuth": []
+    }
+  ]
+}

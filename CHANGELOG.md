@@ -1,5 +1,5 @@
 # Changelog
 
-## 0.1.0
+##0.2.0
 
-Initial deterministic integration artifact. Capability evidence is recorded in integration.json.
+Direct-provider MCP tools with local execution, explicit write approvals and fixture/stdio tests.

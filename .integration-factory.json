@@ -5,22 +5,540 @@
   "releaseEligible": true,
   "maintainer": "jannikco",
   "license": "MIT",
-  "sourceRevision": "ea33908e4d5e10508739f28e11abf708e11f3117f1108b904229eeeb00079e55",
+  "sourceRevision": "51e1323d87d5a769d08fdb3caedbede891154c051d7af141f0d259e9685b394f",
   "evidence": [
-    "Hosted endpoint documentation",
-    "tests/pipmcp.test.mjs"
+    "Actual tools/call and direct-provider request contract tests"
   ],
   "provenance": [
     "https://leadadapter.com/api/v1/openapi.json"
   ],
   "id": "linkedin-mcp",
-  "kind": "mcp-setup",
+  "kind": "provider-connector",
   "product": "leadadapter",
-  "title": "LinkedIn MCP setup and connection checker",
-  "description": "Configure and inspect the hosted LeadAdapter MCP endpoint from supported AI clients.",
-  "operationIds": [],
+  "title": "LeadAdapter LinkedIn MCP server",
+  "description": "Inspect your connected profile state, then retrieve your workspace’s stored leads before planning further governed LinkedIn actions.",
+  "operationIds": [
+    "list_leads_get",
+    "search_post",
+    "list_post_engagers_post",
+    "get_extension_status_get",
+    "comment_on_post_post"
+  ],
   "endpoint": "https://leadadapter.com/mcp",
   "attributionSlug": "github-linkedin-mcp",
+  "artifactType": "connector",
+  "qualityVersion": 2,
+  "appSlug": "linkedin",
+  "appName": "LeadAdapter LinkedIn",
+  "connectorId": "linkedin",
+  "connector": {
+    "id": "linkedin",
+    "name": "LeadAdapter LinkedIn",
+    "version": "0.2.0",
+    "appSlug": "linkedin",
+    "product": "leadadapter",
+    "baseUrl": "https://leadadapter.com/api/v1",
+    "auth": {
+      "type": "bearer",
+      "env": "LEADADAPTER_API_KEY"
+    },
+    "tools": [
+      {
+        "name": "list_leads_get",
+        "description": "List Leads",
+        "method": "GET",
+        "path": "/leads",
+        "readOnly": true,
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "search": {
+              "maxLength": 255,
+              "type": "string"
+            },
+            "status": {
+              "enum": [
+                "new",
+                "contacted",
+                "replied",
+                "qualified",
+                "won",
+                "lost"
+              ],
+              "type": "string"
+            },
+            "page": {
+              "minimum": 1,
+              "type": "integer"
+            },
+            "per_page": {
+              "minimum": 1,
+              "maximum": 50,
+              "type": "integer"
+            },
+            "profile_id": {
+              "description": "The LinkedIn profile to act as. Optional while the workspace has exactly one.",
+              "type": "string"
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        },
+        "bindings": {
+          "path": [],
+          "query": {
+            "search": "search",
+            "status": "status",
+            "page": "page",
+            "per_page": "per_page",
+            "profile_id": "profile_id"
+          },
+          "body": {}
+        },
+        "provenance": [
+          "https://leadadapter.com/api/v1/openapi.json"
+        ]
+      },
+      {
+        "name": "search_post",
+        "description": "Search",
+        "method": "POST",
+        "path": "/linkedin/searches/people",
+        "readOnly": true,
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "limit": {
+              "minimum": 1,
+              "maximum": 50,
+              "type": "integer"
+            },
+            "page": {
+              "minimum": 1,
+              "maximum": 100,
+              "type": "integer"
+            },
+            "dry_run": {
+              "description": "Evaluate the governance rules and return the verdict without acting.",
+              "type": "boolean"
+            },
+            "keywords": {
+              "minItems": 1,
+              "maxItems": 10,
+              "items": {
+                "maxLength": 100,
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "profile_id": {
+              "description": "The LinkedIn profile to act as. Optional while the workspace has exactly one.",
+              "type": "string"
+            },
+            "wait": {
+              "description": "Hold the call until the selected executor finishes, up to 25 seconds.",
+              "type": "boolean"
+            },
+            "idempotencyKey": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            }
+          },
+          "required": [
+            "keywords",
+            "idempotencyKey"
+          ],
+          "additionalProperties": false
+        },
+        "bindings": {
+          "path": [],
+          "query": {},
+          "body": {
+            "limit": "limit",
+            "page": "page",
+            "dry_run": "dry_run",
+            "keywords": "keywords",
+            "profile_id": "profile_id",
+            "wait": "wait"
+          }
+        },
+        "requestHeaderBindings": {
+          "idempotencyKey": "Idempotency-Key"
+        },
+        "provenance": [
+          "https://leadadapter.com/api/v1/openapi.json"
+        ]
+      },
+      {
+        "name": "list_post_engagers_post",
+        "description": "List Post Engagers",
+        "method": "POST",
+        "path": "/linkedin/post-engager-requests",
+        "readOnly": true,
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "limit": {
+              "minimum": 1,
+              "maximum": 50,
+              "type": "integer"
+            },
+            "page": {
+              "minimum": 1,
+              "maximum": 100,
+              "type": "integer"
+            },
+            "dry_run": {
+              "description": "Evaluate the governance rules and return the verdict without acting.",
+              "type": "boolean"
+            },
+            "post_urn": {
+              "maxLength": 255,
+              "type": "string"
+            },
+            "profile_id": {
+              "description": "The LinkedIn profile to act as. Optional while the workspace has exactly one.",
+              "type": "string"
+            },
+            "wait": {
+              "description": "Hold the call until the selected executor finishes, up to 25 seconds.",
+              "type": "boolean"
+            },
+            "idempotencyKey": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            }
+          },
+          "required": [
+            "post_urn",
+            "idempotencyKey"
+          ],
+          "additionalProperties": false
+        },
+        "bindings": {
+          "path": [],
+          "query": {},
+          "body": {
+            "limit": "limit",
+            "page": "page",
+            "dry_run": "dry_run",
+            "post_urn": "post_urn",
+            "profile_id": "profile_id",
+            "wait": "wait"
+          }
+        },
+        "requestHeaderBindings": {
+          "idempotencyKey": "Idempotency-Key"
+        },
+        "provenance": [
+          "https://leadadapter.com/api/v1/openapi.json"
+        ]
+      },
+      {
+        "name": "get_extension_status_get",
+        "description": "Extension status",
+        "method": "GET",
+        "path": "/profiles",
+        "readOnly": true,
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "profile_id": {
+              "description": "The LinkedIn profile to act as. Optional while the workspace has exactly one.",
+              "type": "string"
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        },
+        "bindings": {
+          "path": [],
+          "query": {
+            "profile_id": "profile_id"
+          },
+          "body": {}
+        },
+        "provenance": [
+          "https://leadadapter.com/api/v1/openapi.json"
+        ]
+      },
+      {
+        "name": "comment_on_post_post",
+        "description": "Comment On Post",
+        "method": "POST",
+        "path": "/linkedin/comments",
+        "readOnly": false,
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "target_urn": {
+              "description": "Recipient person URN, post URN or parent comment URN, as appropriate for this tool.",
+              "maxLength": 255,
+              "type": "string"
+            },
+            "lead_id": {
+              "description": "Optional lead belonging to this workspace.",
+              "type": "string"
+            },
+            "author_urn": {
+              "description": "Author of the target post or comment; required for public engagement so suppression checks identify the person.",
+              "maxLength": 255,
+              "type": "string"
+            },
+            "text": {
+              "maxLength": 1900,
+              "type": "string"
+            },
+            "profile_id": {
+              "description": "The LinkedIn profile to act as. Optional while the workspace has exactly one.",
+              "type": "string"
+            },
+            "dry_run": {
+              "description": "Evaluate the governance rules and return the verdict without acting.",
+              "type": "boolean"
+            },
+            "wait": {
+              "description": "Hold the call until the selected executor finishes, up to 25 seconds.",
+              "type": "boolean"
+            },
+            "idempotencyKey": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            }
+          },
+          "required": [
+            "target_urn",
+            "author_urn",
+            "text",
+            "idempotencyKey"
+          ],
+          "additionalProperties": false
+        },
+        "bindings": {
+          "path": [],
+          "query": {},
+          "body": {
+            "target_urn": "target_urn",
+            "lead_id": "lead_id",
+            "author_urn": "author_urn",
+            "text": "text",
+            "profile_id": "profile_id",
+            "dry_run": "dry_run",
+            "wait": "wait"
+          }
+        },
+        "requestHeaderBindings": {
+          "idempotencyKey": "Idempotency-Key"
+        },
+        "idempotencyHeader": "Idempotency-Key",
+        "provenance": [
+          "https://leadadapter.com/api/v1/openapi.json"
+        ]
+      }
+    ],
+    "workflow": {
+      "name": "LinkedIn account and stored-lead inspection",
+      "description": "Inspect your connected profile state, then retrieve your workspace’s stored leads before planning further governed LinkedIn actions.",
+      "steps": [
+        "get_extension_status_get",
+        "list_leads_get"
+      ]
+    },
+    "provenance": [
+      "https://leadadapter.com/api/v1/openapi.json"
+    ],
+    "repoId": "linkedin-mcp",
+    "artifactType": "connector",
+    "sourceRevision": "51e1323d87d5a769d08fdb3caedbede891154c051d7af141f0d259e9685b394f",
+    "capabilityEvidence": {
+      "local": {
+        "level": "Tested",
+        "operations": [
+          {
+            "name": "list_leads_get",
+            "level": "Tested",
+            "evidenceRefs": [
+              "Provider request/stdio contract tests"
+            ],
+            "method": "contract-fixture"
+          },
+          {
+            "name": "search_post",
+            "level": "Tested",
+            "evidenceRefs": [
+              "Provider request/stdio contract tests"
+            ],
+            "method": "contract-fixture"
+          },
+          {
+            "name": "list_post_engagers_post",
+            "level": "Tested",
+            "evidenceRefs": [
+              "Provider request/stdio contract tests"
+            ],
+            "method": "contract-fixture"
+          },
+          {
+            "name": "get_extension_status_get",
+            "level": "Tested",
+            "evidenceRefs": [
+              "Provider request/stdio contract tests"
+            ],
+            "method": "contract-fixture"
+          },
+          {
+            "name": "comment_on_post_post",
+            "level": "Tested",
+            "evidenceRefs": [
+              "Provider request/stdio contract tests"
+            ],
+            "method": "contract-fixture"
+          }
+        ],
+        "evidenceRefs": [
+          "Provider request/stdio contract tests"
+        ],
+        "mode": "local"
+      },
+      "managed": {
+        "level": "Documented",
+        "operations": [
+          {
+            "name": "list_leads_get",
+            "level": "Documented",
+            "evidenceRefs": [],
+            "method": "documentation"
+          },
+          {
+            "name": "search_post",
+            "level": "Documented",
+            "evidenceRefs": [],
+            "method": "documentation"
+          },
+          {
+            "name": "list_post_engagers_post",
+            "level": "Documented",
+            "evidenceRefs": [],
+            "method": "documentation"
+          },
+          {
+            "name": "get_extension_status_get",
+            "level": "Documented",
+            "evidenceRefs": [],
+            "method": "documentation"
+          },
+          {
+            "name": "comment_on_post_post",
+            "level": "Documented",
+            "evidenceRefs": [],
+            "method": "documentation"
+          }
+        ],
+        "evidenceRefs": [],
+        "mode": "managed"
+      }
+    },
+    "managedAvailability": {
+      "status": "listed",
+      "checkedAt": "2026-11-08T12:29:10.433747+00:00"
+    }
+  },
+  "capabilityEvidence": {
+    "local": {
+      "level": "Tested",
+      "operations": [
+        {
+          "name": "list_leads_get",
+          "level": "Tested",
+          "evidenceRefs": [
+            "Provider request/stdio contract tests"
+          ],
+          "method": "contract-fixture"
+        },
+        {
+          "name": "search_post",
+          "level": "Tested",
+          "evidenceRefs": [
+            "Provider request/stdio contract tests"
+          ],
+          "method": "contract-fixture"
+        },
+        {
+          "name": "list_post_engagers_post",
+          "level": "Tested",
+          "evidenceRefs": [
+            "Provider request/stdio contract tests"
+          ],
+          "method": "contract-fixture"
+        },
+        {
+          "name": "get_extension_status_get",
+          "level": "Tested",
+          "evidenceRefs": [
+            "Provider request/stdio contract tests"
+          ],
+          "method": "contract-fixture"
+        },
+        {
+          "name": "comment_on_post_post",
+          "level": "Tested",
+          "evidenceRefs": [
+            "Provider request/stdio contract tests"
+          ],
+          "method": "contract-fixture"
+        }
+      ],
+      "evidenceRefs": [
+        "Provider request/stdio contract tests"
+      ],
+      "mode": "local"
+    },
+    "managed": {
+      "level": "Documented",
+      "operations": [
+        {
+          "name": "list_leads_get",
+          "level": "Documented",
+          "evidenceRefs": [],
+          "method": "documentation"
+        },
+        {
+          "name": "search_post",
+          "level": "Documented",
+          "evidenceRefs": [],
+          "method": "documentation"
+        },
+        {
+          "name": "list_post_engagers_post",
+          "level": "Documented",
+          "evidenceRefs": [],
+          "method": "documentation"
+        },
+        {
+          "name": "get_extension_status_get",
+          "level": "Documented",
+          "evidenceRefs": [],
+          "method": "documentation"
+        },
+        {
+          "name": "comment_on_post_post",
+          "level": "Documented",
+          "evidenceRefs": [],
+          "method": "documentation"
+        }
+      ],
+      "evidenceRefs": [],
+      "mode": "managed"
+    }
+  },
+  "utility": {
+    "problem": "Inspect your connected profile state, then retrieve your workspace’s stored leads before planning further governed LinkedIn actions.",
+    "output": "Actual provider API results through local MCP tools"
+  },
+  "providerDocs": "https://leadadapter.com/api/v1/openapi.json",
   "factory": "leadadapter-pipmcp",
-  "generatorVersion": 1
+  "generatorVersion": 2
 }
