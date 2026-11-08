@@ -1,0 +1,29 @@
+{
+  "name": "@leadadapter/mcp",
+  "version": "0.3.0",
+  "type": "module",
+  "description": "Thin authorized LeadAdapter remote MCP bridge over stdio",
+  "license": "MIT",
+  "main": "index.mjs",
+  "exports": "./index.mjs",
+  "bin": {
+    "leadadapter-mcp": "./cli.mjs"
+  },
+  "files": [
+    "index.mjs",
+    "cli.mjs",
+    "README.md",
+    "MIGRATION.md",
+    "bridge.test.mjs"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/server": "2.4.0"
+  },
+  "scripts": {
+    "test": "node --test bridge.test.mjs",
+    "start": "node cli.mjs"
+  }
+}

@@ -1,1 +1,1 @@
-Provider credentials stay in your environment or local OS credential store. Do not post them in issues. Sensitive reports: https://pipmcp.com/contact
+Report vulnerabilities through the support channel inside your LeadAdapter account. Ask for a private reporting channel before sharing sensitive details. Never include API keys, session tokens or personal records in public issues. Runtime credentials stay in your environment.

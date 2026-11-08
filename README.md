@@ -1,43 +1,12 @@
-# LinkedIn MCP server — LeadAdapter for AI assistants
+# LinkedIn MCP for Claude, Codex and AI agents
 
-**Let an AI assistant work with your LinkedIn sales workspace through concrete, governed tools.**
+**Give your AI assistant access to your authorized LinkedIn workflows through LeadAdapter. One LeadAdapter API key.**
 
-This local MCP server exposes selected LeadAdapter operations over stdio: read leads, inspect connected profile state, request people searches and post-engager data, and propose a governed comment. The same account gives you access to the wider LeadAdapter API and hosted MCP experience.
+Research people, inspect engagement, enrich selected profiles and work with leads through the tools enabled in your workspace. This package bridges stdio MCP clients to LeadAdapter's hosted MCP endpoint; it discovers the server's actual tools and schemas at runtime.
 
-[Create your LeadAdapter account](https://leadadapter.com/github/start?integration=linkedin-mcp&utm_source=github&utm_campaign=github-linkedin-mcp&utm_content=readme) · [See plans and pricing](https://leadadapter.com/pricing) · [API documentation](https://leadadapter.com/docs/api?lang=en) · [Full API reference](https://leadadapter.com/docs/api-reference?lang=en)
+[Get your LeadAdapter API key](https://leadadapter.com/github/start?integration=linkedin-mcp&utm_source=github&utm_campaign=github-linkedin-mcp) · [API documentation](https://leadadapter.com/docs/api-reference?lang=en) · [Integration directory](https://jannikco.github.io/pipmcp-connectors/integrations/linkedin/)
 
-## What you can build
-
-- Ask an assistant to review captured leads and identify the next research step.
-- Research people or a post’s audience, then summarize completed results.
-- Prepare a comment for explicit approval while preserving workspace governance.
-
-Built for: Teams connecting MCP-compatible assistants to real lead research and sales operations.
-
-## Start with one LeadAdapter API key
-
-Create or sign in to [LeadAdapter](https://leadadapter.com/github/start?integration=linkedin-mcp&utm_source=github&utm_campaign=github-linkedin-mcp&utm_content=readme), choose an owned workspace, complete required onboarding, and create a workspace API key under **Settings → API keys**. The only service credential required by this repository is `LEADADAPTER_API_KEY`.
-
-Use a key with `api:read` for these examples. Fresh LinkedIn research needs a connected profile, supported execution access and required consent; your plan’s allowances apply. For a workspace with multiple profiles, add the documented `profile_id` to select one.
-
-### Your first useful API call
-
-Read captured leads first. Search and post-engager tools can return asynchronous receipts; the assistant should distinguish submission from completion.
-
-```sh
-export LEADADAPTER_API_KEY="YOUR_WORKSPACE_API_KEY"
-```
-
-```sh
-curl --fail-with-body --silent --show-error \
-  "https://leadadapter.com/api/v1/leads?per_page=10" \
-  -H "Authorization: Bearer $LEADADAPTER_API_KEY" \
-  -H "Accept: application/json"
-```
-
-The response uses LeadAdapter’s envelope: `ok`, `data`, governance context and request/action identifiers where available. Inspect the actual response; the pinned schema intentionally does not invent a universal lead, profile or search-result shape.
-
-### Run the local MCP server
+## Connect your agent
 
 Requires Node.js 22+. Clone this repository and install its pinned dependencies:
 
@@ -45,103 +14,41 @@ Requires Node.js 22+. Clone this repository and install its pinned dependencies:
 git clone https://github.com/jannikco/linkedin-mcp.git
 cd linkedin-mcp
 npm ci --ignore-scripts
-export LEADADAPTER_API_KEY="YOUR_WORKSPACE_API_KEY"
-npm start -- --call list_leads_get '{"per_page":10}'
+npm test
+node example.mjs
 ```
 
-For an MCP-compatible client, use the following stdio configuration. Replace the absolute path and supply the same LeadAdapter key through your client’s environment settings:
+Set LEADADAPTER_API_KEY in the environment used by your MCP client. Configure its stdio server command as node with the absolute argument /path/to/linkedin-mcp/lib/cli.mjs. Keep the API key in the client's protected environment, never in a committed JSON file. You may also connect a client that supports the hosted endpoint directly to https://leadadapter.com/mcp.
 
-```json
-{
-  "mcpServers": {
-    "leadadapter": {
-      "command": "node",
-      "args": [
-        "/absolute/path/linkedin-mcp/server.mjs"
-      ],
-      "env": {
-        "LEADADAPTER_API_KEY": "YOUR_WORKSPACE_API_KEY"
-      }
-    }
-  }
+Only your LeadAdapter key is used. Available tools depend on the workspace's scopes, connected account, tier and policy. The bridge does not promise that every REST operation is an MCP tool.
+
+## Ask for an outcome
+
+“Research software founders matching our ICP. Show me a source-backed shortlist before adding anyone to CRM.”
+
+“Find the people engaging with this post and help me review who belongs in our pipeline.”
+
+The bundled .agents/skills and .claude/skills provide task instructions for Codex, Claude Code and Grok Build. See AGENTS.md, capabilities.json and llms.txt for discovery. These instructions use your existing agent session; no extra AI model API key is required.
+
+## Remote discovery and receipts
+
+```js
+import {LeadAdapterMcpClient} from './lib/index.mjs';
+const client = new LeadAdapterMcpClient({apiKey: process.env.LEADADAPTER_API_KEY});
+try {
+  const tools = await client.listTools();
+  console.log(tools); // Inspect the actual remote schemas before selecting a tool.
+} finally {
+  await client.close();
 }
 ```
 
-The local server exposes the five operations listed below. The wider platform matrix describes LeadAdapter’s API; it does not claim that every API operation is exposed by this local server. For LeadAdapter’s hosted MCP connection, follow the [MCP guide](https://leadadapter.com/docs/mcp?lang=en).
-## What the full LeadAdapter platform covers
+The bridge preserves remote tool schemas and results, handles JSON/SSE sessions and paginated discovery, and never approves or retries uncertain mutations automatically. A queued job remains pending. Research is separate from approved CRM writes.
 
-This repository focuses on the five local MCP tools below. Your LeadAdapter account also provides the following documented API surfaces; account access, adapter support and operation prerequisites apply.
+## Upgrade from 0.2
 
-| Capability | Build this | Documented API routes | Execution considerations |
-| --- | --- | --- | --- |
-| People and post discovery | Research prospects and relevant conversations | `POST /linkedin/searches/people`<br>`POST /linkedin/searches/posts` | Fresh retrieval needs a connected, supported executor. |
-| Company research | Build account context and inspect known company pages | `POST /linkedin/searches/companies`<br>`GET /linkedin/companies`<br>`POST /linkedin/company-enrichments` | Company-voice operations require the relevant page-admin rights. |
-| Profile enrichment | Add visible professional context to selected leads | `POST /linkedin/profile-enrichments` | Allowance, profile-view budget and returned coverage apply; email availability is conditional. |
-| Post engagement | Research the people engaging with a selected post | `POST /linkedin/post-engager-requests` | Results depend on what the connected account and adapter can retrieve. |
-| Leads and export | Read, qualify and move captured lead data | `GET /leads`<br>`GET /leads/export` | Workspace-scoped data; pagination is explicit. |
-| Native CRM | Work with companies, pipelines, stages, deals and tasks | `GET /crm/{entity}`<br>`POST /crm/{entity}`<br>`GET /crm/{entity}/records` | Write scopes and entity-specific inputs apply. |
-| Stored content and publishing | Connect editorial review and scheduled publishing | `GET /content-posts`<br>`GET /scheduled-posts`<br>`POST /scheduled-posts` | Queued or scheduled work is distinct from confirmed publication. |
-| Messages and connections | Build reviewed conversation and connection workflows | `GET /messages`<br>`POST /linkedin/messages`<br>`POST /linkedin/connection-requests` | Outbound actions remain capped, permissioned and subject to applicable approval. |
-| Engagement actions | Prepare relevant comments and reactions | `POST /linkedin/comments`<br>`POST /linkedin/post-reactions` | Writes require the appropriate scope and governance acceptance. |
-| Comment-to-lead workflows | Connect a comment keyword to a controlled follow-up process | `GET /automations`<br>`POST /automations` | Supported triggers are comment_keyword and any_comment; DM prerequisites and limits apply. |
-| Lead pages and tracked links | Connect campaigns with lead capture and tracked assets | `GET /lead-pages`<br>`GET /links` | Publication and asset management are separate governed operations. |
-| Approvals and audit | Review proposed actions and understand execution decisions | `GET /approvals`<br>`POST /approvals/{approval_id}/decisions`<br>`GET /actions` | Approval does not override caps or unavailable capabilities. |
-| Webhooks | React to supported lead, comment, message and approval events | `GET /webhooks`<br>`POST /webhooks`<br>`GET /webhooks/{id}/deliveries` | Configure subscriptions and validate signed deliveries in your receiver. |
-| Sales intelligence | Connect research with business context and reviewable opportunities | `GET /signals`<br>`GET /sales-opportunities`<br>`GET /business-context` | Availability follows the account’s configured features and existing records. |
+Version 0.3 replaces the historical local REST-backed tool subset with the actual remote MCP inventory. Discover tools again and update clients that depended on local names. Historical MIT code remains in Git history.
 
-## Tools exposed by this local server
+## Evidence and support
 
-| Operation ID | HTTP route, relative to `/api/v1` | Required scope |
-| --- | --- | --- |
-| `list_leads_get` | `GET /leads` | `api:read` |
-| `search_post` | `POST /linkedin/searches/people` | `api:read` |
-| `list_post_engagers_post` | `POST /linkedin/post-engager-requests` | `api:read` |
-| `get_extension_status_get` | `GET /profiles` | `api:read` |
-| `comment_on_post_post` | `POST /linkedin/comments` | `api:write` |
-
-Use the [API reference](https://leadadapter.com/docs/api-reference?lang=en) for complete inputs, limits and operation behavior.
-
-## Fresh data, queued jobs and reliable outcomes
-
-Stored workspace data can return immediately. Fresh LinkedIn retrieval or outbound work may return a job receipt, including `job_id`, instead of a completed result. When a job is returned:
-
-1. Keep its identifier and the request’s idempotency key.
-2. Poll `GET /api/v1/jobs/{job_id}` with the same workspace key. A documented `wait=true` can hold the read for up to25 seconds.
-3. Inspect the terminal status and result/error: `done`, `failed` or `cancelled`. `queued` and `leased` are still in progress.
-
-```sh
-export JOB_ID="REPLACE_WITH_RETURNED_JOB_ID"
-curl --fail-with-body --silent --show-error \
-  "https://leadadapter.com/api/v1/jobs/$JOB_ID?wait=true" \
-  -H "Authorization: Bearer $LEADADAPTER_API_KEY" \
-  -H "Accept: application/json"
-```
-
-An accepted request, an approved action and confirmed LinkedIn delivery are separate states. Do not report successful delivery from a queue acknowledgement.
-
-## Permissions and operational control
-
-- **One workspace key, explicit scopes.** Use `api:read` for the documented reads, and grant write access only for the operations your application needs. Store keys server-side; do not place them in browser bundles, commits or issue reports.
-- **Connected-account execution.** Browser-mode work uses the user’s connected browser. Supported consented cloud operations can run independently of Chrome. Availability is checked per operation; an API route does not grant unrestricted LinkedIn access.
-- **Governed actions.** Workspace/profile caps, pacing, do-not-engage rules, account permissions and required approvals still apply. Some operations support `dry_run`; check the operation’s schema before sending it.
-- **Explicit retries.** Operations requiring `Idempotency-Key` include fresh-data POST reads as well as writes. Reuse the same key and payload for the same logical request. Resolve uncertain outcomes before issuing a new request.
-- **Useful errors.** Handle permission/capability refusals, validation errors and429 pacing responses. Preserve request identifiers for support and follow any returned retry guidance.
-- **Local write guard.** This server disables writes by default. Enabling `CONNECTOR_ALLOW_WRITES=true` also requires a per-call `_approval: {approved:true,idempotencyKey:"unique-request-id"}`. The local guard adds protection; LeadAdapter still makes the server-side governance decision.
-
-## Public client, private service
-
-This repository publishes MCP client/server integration code under MIT. LeadAdapter’s hosted application, connected-account execution, governance, data storage and commercial service remain private. The public code does not include the service backend or a self-hosted substitute for a LeadAdapter account. This is an independent LeadAdapter integration, not an official LinkedIn API or LinkedIn-endorsed SDK.
-
-## Continue building
-
-- [Activate this workflow in LeadAdapter](https://leadadapter.com/github/start?integration=linkedin-mcp&utm_source=github&utm_campaign=github-linkedin-mcp&utm_content=readme) — the selected project and repository campaign stay with your signup.
-- [Plans and pricing](https://leadadapter.com/pricing) — check current feature access and allowances before production use.
-- [TypeScript SDK](https://github.com/jannikco/linkedin-typescript-sdk), [Python SDK](https://github.com/jannikco/linkedin-python-sdk) and [MCP server](https://github.com/jannikco/linkedin-mcp).
-- [API quickstart](https://leadadapter.com/docs/api?lang=en), [complete reference](https://leadadapter.com/docs/api-reference?lang=en), [MCP guide](https://leadadapter.com/docs/mcp?lang=en) and [public OpenAPI](https://leadadapter.com/api/v1/openapi.json).
-- [Integration directory](https://jannikco.github.io/pipmcp-connectors/integrations/linkedin/).
-
-## Verification and support
-
-This code is checked with contract fixtures; the MCP artifact also tests stdio tools/call. These checks establish client behavior, not live LinkedIn provider execution or conversion outcomes. See `integration.json` and `SHA256SUMS` for the recorded artifact evidence. The source contract is [LeadAdapter’s public OpenAPI](https://leadadapter.com/api/v1/openapi.json).
-
-For a reproducible client bug, open a repository issue with the operation ID and a sanitized request identifier. For account access, plans or execution availability, use LeadAdapter’s in-app support. Never include API keys, personal lead data or session material.
+Package behavior is tested with synthetic remote MCP fixtures. Live authentication and LinkedIn execution require your authorized account and are not implied by passing fixture tests. Never include API keys or personal records in public issues. MIT applies to this bridge; LeadAdapter's hosted execution remains private.

@@ -1,19 +1,20 @@
 {
   "name": "linkedin-mcp",
-  "version": "0.2.0",
-  "description": "Inspect your connected profile state, then retrieve your workspace’s stored leads before planning further governed LinkedIn actions.",
+  "version": "0.3.0",
+  "description": "Use your authorized LinkedIn workflows from AI agents through LeadAdapter remote MCP. Discover actual tools with one LeadAdapter API key.",
   "type": "module",
+  "private": false,
   "license": "MIT",
   "engines": {
     "node": ">=22"
   },
-  "bin": {
-    "linkedin-mcp": "server.mjs"
-  },
   "scripts": {
-    "start": "node example.mjs",
-    "server": "node server.mjs",
-    "test": "node --test tests/*.test.mjs"
+    "test": "node --test",
+    "start": "node lib/cli.mjs"
+  },
+  "exports": "./lib/index.mjs",
+  "bin": {
+    "linkedin-mcp": "./lib/cli.mjs"
   },
   "dependencies": {
     "@modelcontextprotocol/server": "2.4.0"
