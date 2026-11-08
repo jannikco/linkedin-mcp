@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "status": "ready",
+  "verification": "mock-only",
+  "releaseEligible": true,
+  "maintainer": "jannikco",
+  "license": "MIT",
+  "sourceRevision": "ea33908e4d5e10508739f28e11abf708e11f3117f1108b904229eeeb00079e55",
+  "evidence": [
+    "Hosted endpoint documentation",
+    "tests/pipmcp.test.mjs"
+  ],
+  "provenance": [
+    "https://leadadapter.com/api/v1/openapi.json"
+  ],
+  "id": "linkedin-mcp",
+  "kind": "mcp-setup",
+  "product": "leadadapter",
+  "title": "LinkedIn MCP setup and connection checker",
+  "description": "Configure and inspect the hosted LeadAdapter MCP endpoint from supported AI clients.",
+  "operationIds": [],
+  "endpoint": "https://leadadapter.com/mcp",
+  "attributionSlug": "github-linkedin-mcp",
+  "factory": "leadadapter-pipmcp",
+  "generatorVersion": 1
+}
