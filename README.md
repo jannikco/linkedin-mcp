@@ -1,3 +1,72 @@
+# Work on LinkedIn research and CRM tasks with your assistant
+
+**LinkedIn + your AI assistant · powered by LeadAdapter**
+
+You want to ask your coding assistant for LinkedIn research, engagement analysis and reviewed CRM work using the tools your LeadAdapter account actually exposes.
+
+**Made for:** People using a coding assistant for sales work
+
+Real tasks need a LeadAdapter account. Connect LinkedIn too when your task needs fresh LinkedIn activity.
+
+## Ask your AI to set this up
+
+Paste this into a coding assistant that can open project files and run commands, such as Codex, Claude Code or Grok Build. You do not need to understand the code first.
+
+```text
+Help me use this project: https://github.com/jannikco/linkedin-mcp
+
+I'm not a programmer. My goal is: Work on LinkedIn research and CRM tasks with your
+assistant.
+
+Read the project instructions and set it up in a new folder without overwriting my work.
+Guide me through LeadAdapter and its private key setup; never ask me to paste secrets into
+this chat. Run a documented sample-data demo if available, then help me get a first small
+result from my connected app. Explain the result in plain English. Ask before changing
+records, sending messages or publishing anything.
+```
+
+## Three useful things to ask for
+
+```text
+Connect to my authorized LeadAdapter tools and explain the available actions in plain
+English.
+```
+
+```text
+Help me choose one useful research task from the tools actually returned. Ask before any
+action that changes data or contacts another person.
+```
+
+```text
+Turn the completed research we review into a concise customer brief and a proposed next
+step for the sales team.
+```
+
+## Your path to a real result
+
+```mermaid
+flowchart LR
+  A["Ask your AI"] --> B["Connect LeadAdapter"] --> C["Work on LinkedIn<br/>research and CRM<br/>tasks…"] --> D["Review together"]
+```
+
+1. [Open LeadAdapter setup](https://leadadapter.com/github/start?integration=linkedin-mcp&flow=agent-lead-review&utm_source=github&utm_campaign=github-linkedin-mcp&utm_content=people-first-readme) and sign in or create your account.
+2. Connect a LinkedIn profile if your chosen task needs fresh LinkedIn activity.
+3. Create the product API key through the official setup, add it privately to your AI project's environment, and ask your AI to try a small read.
+
+**What to expect:** You need one LeadAdapter API key and the workspace access required by the task. LinkedIn operations also depend on the connected profile, consent and available tools. Work that is queued stays pending until a real result is returned.
+
+Add your LeadAdapter key privately in your project settings. Keep keys out of chat and public repositories.
+
+## Keep going
+
+- [Explore the LinkedIn API](https://github.com/jannikco/linkedin-api)
+- [Build with the JavaScript / TypeScript client](https://github.com/jannikco/linkedin-typescript-sdk)
+- [Build with the Python client](https://github.com/jannikco/linkedin-python-sdk)
+
+<details>
+<summary>Technical reference: installation commands, exact capabilities and troubleshooting</summary>
+
+<!-- people-first:technical:start -->
 # LinkedIn MCP for Claude, Codex and AI agents
 
 ## Review a lead shortlist from your AI assistant
@@ -88,3 +157,7 @@ Version 0.3 replaces the historical local REST-backed tool subset with the actua
 ## Evidence and support
 
 Package behavior is tested with synthetic remote MCP fixtures. Live authentication and LinkedIn execution require your authorized account and are not implied by passing fixture tests. Never include API keys or personal records in public issues. MIT applies to this bridge; LeadAdapter's hosted execution remains private.
+
+<!-- people-first:technical:end -->
+
+</details>
